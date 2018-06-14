@@ -31,6 +31,7 @@ import java.util.List;
 import org.wltea.analyzer.cfg.Configuration;
 import org.wltea.analyzer.cfg.DefaultConfig;
 import org.wltea.analyzer.dic.Dictionary;
+import org.wltea.analyzer.ext.PinyinGenerator;
 
 /**
  * IK分词器主类
@@ -48,7 +49,15 @@ public final class IKSegmenter {
 	private List<ISegmenter> segmenters;
 	//分词歧义裁决器
 	private IKArbitrator arbitrator;
-	
+
+	//当前的词元
+	private Lexeme curChineseLexeme=null;
+
+	//当前词元的拼音组合列表
+	private List<String> pinyinLexemeList=null;
+
+	//是否有拼音词元
+	private boolean hasPinyin=false;
 
 	/**
 	 * IK分词器构造函数
@@ -112,6 +121,21 @@ public final class IKSegmenter {
 	 * @throws IOException
 	 */
 	public synchronized Lexeme next()throws IOException{
+
+		//扩展英文分词的地方1
+		if(hasPinyin) {
+			int pinyinListCnt =pinyinLexemeList==null?0:pinyinLexemeList.size();
+			if(pinyinListCnt<=0) {
+				hasPinyin=false;
+			}else {
+				String curPinyin = pinyinLexemeList.get(0);
+				Lexeme pinyinLexeme = new Lexeme(curChineseLexeme.getOffset(),curChineseLexeme.getBegin(),curChineseLexeme.getLength(),Lexeme.TYPE_LETTER);
+				pinyinLexeme.setLexemeText(curPinyin);
+				pinyinLexemeList.remove(0);
+				return pinyinLexeme;
+			}
+		}
+
 		Lexeme l = null;
 		while((l = context.getNextLexeme()) == null ){
 			/*
@@ -151,6 +175,19 @@ public final class IKSegmenter {
 			//记录本次分词的缓冲区位移
 			context.markBufferOffset();			
 		}
+
+		//扩展英文分词的地方2
+		String lexemeStr =l==null?null:l.getLexemeText();
+		if(lexemeStr!=null && hasChinese(lexemeStr)) {
+			List<String> pyList = PinyinGenerator.genPinyinList(lexemeStr);
+			int pyCnt = pyList==null?0:pyList.size();
+			if(pyCnt>0) {
+				hasPinyin=true;
+				curChineseLexeme=l;
+				pinyinLexemeList=pyList;
+			}
+		}
+
 		return l;
 	}
 
@@ -164,5 +201,32 @@ public final class IKSegmenter {
 		for(ISegmenter segmenter : segmenters){
 			segmenter.reset();
 		}
+	}
+
+
+	public static boolean hasChinese(String str)
+	{
+		if(str==null)
+		{
+			return false;
+		}
+		char[] charArray = str.toCharArray();
+		for (int i = 0; i < charArray.length; i++)
+		{
+			if (isChinese(charArray[i]))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static boolean isChinese(char str)
+	{
+		if ((str >= 0x4e00) && (str <= 0x9fbb))
+		{
+			return true;
+		}
+		return false;
 	}
 }

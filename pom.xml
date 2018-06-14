@@ -2,10 +2,9 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.wltea.ik-analyzer</groupId>
-	<artifactId>ik-analyzer</artifactId>
+	<artifactId>ik-analyzer-pinyin</artifactId>
 	<version>5.5.0</version>
-	<name>IK Analyzer 5</name>
-	<description>A dictionary and grammar-based Chinese segmenter.</description>
+	<name>ik-analyzer-pinyin</name>
     <properties>
         <lucene.version>5.5.2</lucene.version>
     </properties>
@@ -20,13 +19,6 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>3.8.2</version>
-			<scope>test</scope>
-		</dependency>
-		
-		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-queryparser</artifactId>
 			<version>${lucene.version}</version>
@@ -38,6 +30,44 @@
 			<version>${lucene.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.github.stuxuhai</groupId>
+			<artifactId>jpinyin</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.2</version>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
-	
+
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/java</directory>
+				<includes>
+					<include>**/*.xml</include>
+					<include>**/*.dic</include>
+				</includes>
+			</resource>
+		</resources>
+	</build>
+
+	<distributionManagement>
+		<repository>
+			<id>releases</id>
+			<name>NexusReleases</name>
+			<url>http://119.23.35.221:8081/content/repositories/releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>snapshots</id>
+			<name>snapshots</name>
+			<url>http://119.23.35.221:8081/content/repositories/snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
+
 </project>
