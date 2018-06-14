@@ -1,35 +1,34 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<groupId>org.wltea.ik-analyzer</groupId>
 	<artifactId>ik-analyzer-pinyin</artifactId>
 	<version>5.5.0</version>
-	<name>ik-analyzer-pinyin</name>
+	<packaging>jar</packaging>
+
     <properties>
         <lucene.version>5.5.2</lucene.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     
     <dependencies>
-
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-core</artifactId>
 			<version>${lucene.version}</version>
 			<optional>true</optional>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-queryparser</artifactId>
 			<version>${lucene.version}</version>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-analyzers-common</artifactId>
 			<version>${lucene.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>com.github.stuxuhai</groupId>
 			<artifactId>jpinyin</artifactId>
@@ -48,6 +47,14 @@
 	<build>
 		<resources>
 			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>*.xml</include>
+					<include>*.dic</include>
+				</includes>
+				<filtering>false</filtering>
+			</resource>
+			<resource>
 				<directory>src/main/java</directory>
 				<includes>
 					<include>**/*.xml</include>
@@ -56,18 +63,5 @@
 			</resource>
 		</resources>
 	</build>
-
-	<distributionManagement>
-		<repository>
-			<id>releases</id>
-			<name>NexusReleases</name>
-			<url>http://119.23.35.221:8081/content/repositories/releases/</url>
-		</repository>
-		<snapshotRepository>
-			<id>snapshots</id>
-			<name>snapshots</name>
-			<url>http://119.23.35.221:8081/content/repositories/snapshots/</url>
-		</snapshotRepository>
-	</distributionManagement>
 
 </project>
