@@ -79,21 +79,26 @@ public final class IKAnalyzer extends Analyzer{
 	 * (non-Javadoc)
 	 * @see org.apache.lucene.analysis.Analyzer#createComponents(java.lang.String)
 	 */
-	@Override
-	protected TokenStreamComponents createComponents(String fieldName) {
-		Reader in = null;
-        try{
-            in = new StringReader(fieldName);
-            Tokenizer it = new IKTokenizer(in , this.useSmart());
-            return new Analyzer.TokenStreamComponents(it);
-        } finally {
-        	if (in != null) {
-        		try {
-					in.close();
-				} catch (IOException e) {
-				}
-        	}
-        }
-	}
+//	@Override
+//	protected TokenStreamComponents createComponents(String fieldName) {
+//		Reader in = null;
+//        try{
+//            in = new StringReader(fieldName);
+//            Tokenizer it = new IKTokenizer(in , this.useSmart());
+//            return new Analyzer.TokenStreamComponents(it);
+//        } finally {
+//        	if (in != null) {
+//        		try {
+//					in.close();
+//				} catch (IOException e) {
+//				}
+//        	}
+//        }
+//	}
 
+	protected Analyzer.TokenStreamComponents createComponents(String fieldName)
+	{
+		Tokenizer _IKTokenizer = new IKTokenizer(useSmart());
+		return new Analyzer.TokenStreamComponents(_IKTokenizer);
+	}
 }
