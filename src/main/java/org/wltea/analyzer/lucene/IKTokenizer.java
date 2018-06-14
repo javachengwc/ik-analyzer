@@ -55,6 +55,8 @@ public final class IKTokenizer extends Tokenizer {
 	//记录最后一个词元的结束位置
 	private int endPosition;
 
+	//是否分析拼音
+	private boolean analysisPinyin=false;
 
 	public IKTokenizer()
 	{
@@ -63,6 +65,12 @@ public final class IKTokenizer extends Tokenizer {
 
 	public IKTokenizer(boolean useSmart)
 	{
+		init(useSmart);
+	}
+
+	public IKTokenizer(boolean useSmart,boolean analysisPinyin)
+	{
+		this.analysisPinyin=analysisPinyin;
 		init(useSmart);
 	}
 
@@ -89,7 +97,7 @@ public final class IKTokenizer extends Tokenizer {
 		this.offsetAtt = addAttribute(OffsetAttribute.class);
 		this.termAtt = addAttribute(CharTermAttribute.class);
 		this.typeAtt = addAttribute(TypeAttribute.class);
-		this._IKImplement = new IKSegmenter(this.input, useSmart);
+		this._IKImplement = new IKSegmenter(this.input, useSmart,this.analysisPinyin);
 	}
 
 

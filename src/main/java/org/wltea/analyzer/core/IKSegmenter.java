@@ -50,6 +50,9 @@ public final class IKSegmenter {
 	//分词歧义裁决器
 	private IKArbitrator arbitrator;
 
+	//是否分析拼音
+	private boolean analysisPinyin=false;
+
 	//当前的词元
 	private Lexeme curChineseLexeme=null;
 
@@ -85,7 +88,17 @@ public final class IKSegmenter {
 		this.cfg = cfg;
 		this.init();
 	}
-	
+
+	public IKSegmenter(Reader input , boolean useSmart,boolean analysisPinyin){
+		this(input,useSmart);
+		this.analysisPinyin=analysisPinyin;
+	}
+
+	public IKSegmenter(Reader input , Configuration cfg,boolean analysisPinyin){
+		this(input,cfg);
+		this.analysisPinyin=analysisPinyin;
+	}
+
 	/**
 	 * 初始化
 	 */
@@ -123,7 +136,7 @@ public final class IKSegmenter {
 	public synchronized Lexeme next()throws IOException{
 
 		//扩展英文分词的地方1
-		if(hasPinyin) {
+		if(analysisPinyin && hasPinyin) {
 			int pinyinListCnt =pinyinLexemeList==null?0:pinyinLexemeList.size();
 			if(pinyinListCnt<=0) {
 				hasPinyin=false;
@@ -177,14 +190,16 @@ public final class IKSegmenter {
 		}
 
 		//扩展英文分词的地方2
-		String lexemeStr =l==null?null:l.getLexemeText();
-		if(lexemeStr!=null && hasChinese(lexemeStr)) {
-			List<String> pyList = PinyinGenerator.genPinyinList(lexemeStr);
-			int pyCnt = pyList==null?0:pyList.size();
-			if(pyCnt>0) {
-				hasPinyin=true;
-				curChineseLexeme=l;
-				pinyinLexemeList=pyList;
+		if(analysisPinyin) {
+			String lexemeStr =l==null?null:l.getLexemeText();
+			if(lexemeStr!=null && hasChinese(lexemeStr)) {
+				List<String> pyList = PinyinGenerator.genPinyinList(lexemeStr);
+				int pyCnt = pyList==null?0:pyList.size();
+				if(pyCnt>0) {
+					hasPinyin=true;
+					curChineseLexeme=l;
+					pinyinLexemeList=pyList;
+				}
 			}
 		}
 
